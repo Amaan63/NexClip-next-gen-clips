@@ -1,0 +1,33 @@
+{
+  "name": "fanatsy-hub",
+  "version": "1.0.0",
+  "description": "fanstasy hub backend ",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amaan63/Fanatsy-Hub.git"
+  },
+  "author": "Amaan Sayyed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Amaan63/Fanatsy-Hub/issues"
+  },
+  "homepage": "https://github.com/Amaan63/Fanatsy-Hub#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0",
+    "morgan": "^1.10.1",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
