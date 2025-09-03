@@ -1,7 +1,8 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import logger from "./config/logger.js";
+import router from "./routes/index.route.js";
+import { errorHandler, notFound } from "./middlewares/error.middleware.js";
 
 // using express
 const app = express();
@@ -15,10 +16,14 @@ app.use(morgan("dev"));
 // for cors
 app.use(cors());
 
+// routes
+app.use("/api/fantasyHub", router);
+
 // this is the middle that is used to show the error
-app.use((err, req, res, next) => {
-  logger.error(err.message);
-  res.status(500).json({ error: "Something went wrong!" });
-});
+// 404 handler
+app.use(notFound);
+
+// Error handler (with logger inside)
+app.use(errorHandler);
 
 export default app;
