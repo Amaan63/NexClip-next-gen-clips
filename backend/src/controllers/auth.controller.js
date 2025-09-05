@@ -16,6 +16,7 @@ const login = async (req, res) => {
       user: {
         id: user.id,
         username: user.username,
+        role: user.role, // <-- send role to frontend
       },
       generatedToken: token, // <-- send token to frontend
     });
