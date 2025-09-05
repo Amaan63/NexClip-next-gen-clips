@@ -57,3 +57,15 @@ export const updateCategoryController = async (req, res) => {
   }
 };
 
+// Delete Category
+export const deleteCategoryController = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+
+    const result = await deleteCategoryById(categoryId);
+
+    res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
