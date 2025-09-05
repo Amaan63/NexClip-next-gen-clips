@@ -1,5 +1,6 @@
 import Category from "../models/category.js";
 
+// Service to create a new category
 export const createCategory = async (name, description, avatarUrl) => {
   const trimmedName = name.trim();
 
@@ -22,4 +23,17 @@ export const createCategory = async (name, description, avatarUrl) => {
 
   await category.save();
   return category;
+};
+
+// Service to get all categories
+export const getAllCategories = async () => {
+  const categories = await Category.find()
+    .select("-__v")
+    .sort({ createdAt: -1 });
+
+  if (!categories || categories.length === 0) {
+    throw new Error("No categories found");
+  }
+
+  return categories;
 };
