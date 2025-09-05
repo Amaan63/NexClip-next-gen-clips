@@ -26,5 +26,12 @@ categoryAdminRoute.put(
   updateCategoryController
 );
 
+// Delete
+categoryAdminRoute.delete(
+  "/deleteCategory/:categoryId",
+  authMiddleware,
+  authorizeRoles(ROLES.ADMIN),
+  deleteCategoryController
+);
 
 export default categoryAdminRoute;
