@@ -1,4 +1,4 @@
-import { createCategory } from "../services/category.service.js";
+import { createCategory, getAllCategories } from "../services/category.service.js";
 
 export const createCategoryController = async (req, res) => {
   try {
@@ -22,5 +22,14 @@ export const createCategoryController = async (req, res) => {
     return res.status(201).json({ success: true, data: category });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const getAllCategoriesController = async (req, res) => {
+  try {
+    const categories = await getAllCategories();
+    return res.status(200).json({ success: true, data: categories });
+  } catch (error) {
+    return res.status(404).json({ success: false, message: error.message });
   }
 };
