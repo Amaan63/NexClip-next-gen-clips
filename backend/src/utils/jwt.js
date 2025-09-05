@@ -16,9 +16,13 @@ export const generateToken = (user) => {
     throw new Error("Invalid user object for token generation");
   }
 
-  return jwt.sign({ username: user.username }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES,
-  });
+  return jwt.sign(
+    { id: user._id, username: user.username, role: user.role },
+    JWT_SECRET,
+    {
+      expiresIn: JWT_EXPIRES,
+    }
+  );
 };
 
 /**
