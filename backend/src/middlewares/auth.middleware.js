@@ -1,15 +1,25 @@
 import { verifyToken } from "../utils/jwt.util.js";
 
 export const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers["authorization"]; // format: Bearer <token>
-  const token = authHeader && authHeader.split(" ")[1];
+  try {
+    const authHeader = req.headers["authorization"];
 
-  const result = verifyToken(token);
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .json({ success: false, error: "No token provided" });
+    }
 
-  if (!result.success) {
-    return res.status(401).json({ success: false, error: result.error });
+    const token = authHeader.split(" ")[1];
+    const result = verifyToken(token);
+
+    if (!result.success) {
+      return res.status(401).json({ success: false, error: result.error });
+    }
+
+    req.user = result.data; // attach decoded data (username, role, etc.)
+    next();
+  } catch (err) {
+    return res.status(401).json({ success: false, error: "Unauthorized" });
   }
-
-  req.user = result.data; // attach decoded data (e.g., { username })
-  next();
 };
