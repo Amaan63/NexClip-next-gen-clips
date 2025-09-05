@@ -37,3 +37,32 @@ export const getAllCategories = async () => {
 
   return categories;
 };
+
+// Update Category by ID
+export const updateCategoryById = async (
+  categoryId,
+  { name, description, avatarUrl }
+) => {
+  const category = await Category.findById(categoryId);
+  if (!category) {
+    throw new Error("Category not found");
+  }
+
+  if (name) {
+    const existingCategory = await Category.findOne({
+      name: name.trim(),
+      _id: { $ne: categoryId },
+    });
+    if (existingCategory) {
+      throw new Error("Another category with this name already exists");
+    }
+    category.name = name.trim();
+  }
+
+  category.description = description?.trim() || null;
+  category.avatarUrl = avatarUrl?.trim() || null;
+
+  await category.save();
+  return category;
+};
+
