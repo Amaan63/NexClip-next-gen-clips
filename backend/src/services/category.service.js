@@ -66,3 +66,13 @@ export const updateCategoryById = async (
   return category;
 };
 
+// Delete Category by ID
+export const deleteCategoryById = async (categoryId) => {
+  const category = await Category.findById(categoryId);
+  if (!category) {
+    throw new Error("Category not found");
+  }
+
+  await Category.findByIdAndDelete(categoryId);
+  return { message: "Category deleted successfully" };
+};
