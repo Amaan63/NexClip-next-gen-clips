@@ -1,4 +1,8 @@
-import { createPost } from "../services/post.service.js";
+import {
+  createPost,
+  getAllPostsForAdmin,
+  getAllPublicPosts,
+} from "../services/post.service.js";
 import { validatePost } from "../validations/validatePost.js";
 
 export const createPostController = async (req, res) => {
@@ -29,3 +33,14 @@ export const createPostController = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
+
+// Controller for users → only fetch public posts
+export const getAllPublicPostsController = async (req, res) => {
+  try {
+    const posts = await getAllPublicPosts();
+    res.status(200).json({ success: true, posts });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
