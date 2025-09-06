@@ -1,7 +1,7 @@
 import Poll from "../models/poll.js";
 
 export const createPoll = async (pollData) => {
-  if (!pollData) return "Poll is not active for this post";
+  if (!pollData) return null;
 
   const { question, options } = pollData;
   if (!question || !Array.isArray(options) || options.length === 0) {
@@ -11,7 +11,7 @@ export const createPoll = async (pollData) => {
   const poll = new Poll({
     question: question.trim(),
     options: options.map((opt) => ({ text: opt.text.trim() })),
-    isActive: false,
+    isActive: true,
   });
 
   await poll.save();
