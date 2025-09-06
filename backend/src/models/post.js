@@ -14,7 +14,7 @@ const postSchema = new mongoose.Schema(
         name: { type: String, required: true }, // for quick search
       },
     ],
-    poll: { type: mongoose.Schema.Types.ObjectId, ref: "Poll" }, // optional
+    poll: { type: mongoose.Schema.Types.Mixed, ref: "Poll" }, // optional
     visibility: {
       type: String,
       enum: ["public", "private"],
