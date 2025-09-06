@@ -76,3 +76,19 @@ export const deleteCategoryById = async (categoryId) => {
   await Category.findByIdAndDelete(categoryId);
   return { message: "Category deleted successfully" };
 };
+
+// Get cateory By Name
+export const getCategoriesByName = async (categoryNames) => {
+  const categoryObjects = await Category.find({ name: { $in: categoryNames } });
+  const foundNames = categoryObjects.map((cat) => cat.name);
+  const missing = categoryNames.filter((name) => !foundNames.includes(name));
+
+  if (missing.length > 0) {
+    throw new Error(`Categories not found: ${missing.join(", ")}`);
+  }
+
+  return categoryObjects.map((cat) => ({
+    categoryId: cat._id,
+    name: cat.name,
+  }));
+};
