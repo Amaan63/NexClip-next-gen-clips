@@ -9,7 +9,7 @@ const pollSchema = new mongoose.Schema(
         votes: { type: Number, default: 0 },
       },
     ],
-    isActive: { type: Boolean, default: true },
+    isActive: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
