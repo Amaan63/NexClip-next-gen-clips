@@ -1,4 +1,4 @@
-import { addComment } from "../services/comment.service.js";
+import { addComment, getCommentsByPost } from "../services/comment.service.js";
 import { validateComment } from "../validations/validateComment.js";
 
 export const addCommentController = async (req, res) => {
@@ -19,6 +19,18 @@ export const addCommentController = async (req, res) => {
     const comment = await addComment({ postId, userId, text });
 
     res.status(201).json({ success: true, data: comment });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const getCommentsController = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const comments = await getCommentsByPost(postId);
+
+    res.status(200).json({ success: true, data: comments });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
