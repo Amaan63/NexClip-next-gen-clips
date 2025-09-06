@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createPostController,
+  deletePostController,
   getAllPostsForAdminController,
   updatePostController,
 } from "../../controllers/post.controller.js";
@@ -29,6 +30,13 @@ postAdminRouter.put(
   authMiddleware,
   authorizeRoles(ROLES.ADMIN),
   updatePostController
+);
+
+postAdminRouter.delete(
+  "/deletePost/:postId",
+  authMiddleware,
+  authorizeRoles(ROLES.ADMIN),
+  deletePostController
 );
 
 export default postAdminRouter;
