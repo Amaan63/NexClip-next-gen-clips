@@ -2,10 +2,12 @@ import express from "express";
 import { getProfile } from "../controllers/user.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import categoryUserRoute from "./user/category.user.route.js";
+import userPostRouter from "./user/post.user.route.js";
 
 const userRoute = express.Router();
 
 userRoute.get("/profile", authMiddleware, getProfile);
 userRoute.use("/", categoryUserRoute); // GET /api/users/profile
+userRoute.use("/Post", userPostRouter); // GET /api/users/Post/getAllPublicPosts
 
 export default userRoute;
