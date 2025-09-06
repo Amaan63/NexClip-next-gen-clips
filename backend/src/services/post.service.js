@@ -124,3 +124,26 @@ export const updatePost = async (postId, updateData) => {
   await post.save();
   return post;
 };
+
+// ✅ Delete Post (also delete poll if exists)
+export const deletePost = async (postId) => {
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    throw new Error("Post not found or already deleted");
+  }
+
+  // If post has a poll (ObjectId), delete it
+  if (post.poll && mongoose.Types.ObjectId.isValid(post.poll)) {
+    try {
+      await Poll.findByIdAndDelete(post.poll);
+    } catch (err) {
+      console.warn(`Poll ${post.poll} not found or already deleted`);
+    }
+  }
+
+  // Delete the post itself
+  await post.deleteOne();
+
+  return { message: "Post and its poll deleted successfully" };
+};
