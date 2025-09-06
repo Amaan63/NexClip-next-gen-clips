@@ -4,6 +4,7 @@ import { getAllUsersController } from "../controllers/admin.controller.js";
 import { authorizeRoles } from "../middlewares/authorize.role.js";
 import { ROLES } from "../constants/roles.js";
 import categoryAdminRoute from "./admin/category.admin.route.js";
+import postAdminRouter from "./admin/post.admin.route.js";
 
 const adminRoute = express.Router();
 
@@ -14,5 +15,8 @@ adminRoute.get(
   getAllUsersController
 );
 adminRoute.use("/Category", categoryAdminRoute);
+
+// Post Admin Routes
+adminRoute.use("/Post", postAdminRouter);
 
 export default adminRoute;
