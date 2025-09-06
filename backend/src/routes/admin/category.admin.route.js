@@ -6,7 +6,7 @@ import {
 } from "../../controllers/category.controller.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../../middlewares/authorize.role.js";
-import { ROLES } from "../../utils/roles.js";
+import { ROLES } from "../../constants/roles.js";
 
 const categoryAdminRoute = express.Router();
 
