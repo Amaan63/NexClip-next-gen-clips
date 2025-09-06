@@ -2,6 +2,7 @@ import express from "express";
 import {
   createPostController,
   getAllPostsForAdminController,
+  updatePostController,
 } from "../../controllers/post.controller.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../../middlewares/authorize.role.js";
@@ -21,6 +22,13 @@ postAdminRouter.get(
   authMiddleware,
   authorizeRoles(ROLES.ADMIN),
   getAllPostsForAdminController
+);
+
+postAdminRouter.put(
+  "/updatePost/:postId",
+  authMiddleware,
+  authorizeRoles(ROLES.ADMIN),
+  updatePostController
 );
 
 export default postAdminRouter;
