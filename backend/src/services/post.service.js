@@ -1,6 +1,4 @@
 import Post from "../models/post.js";
-import Category from "../models/category.js";
-import Poll from "../models/poll.js";
 import mongoose from "mongoose";
 import { getCategoriesByName } from "./category.service.js";
 import { createPoll } from "./poll.service.js";
@@ -24,7 +22,7 @@ export const createPost = async ({
     caption: caption.trim(),
     mediaUrl: mediaUrl?.trim() || null,
     categories: formattedCategories,
-    poll: pollValue, // Either poll ID or default message
+    poll: pollValue || null, // Either poll ID or null
     visibility: visibility || "public",
     allowComments: allowComments || false,
   });
@@ -33,3 +31,21 @@ export const createPost = async ({
 
   return post;
 };
+
+// Service to fetch all public posts for users
+export const getAllPublicPosts = async () => {
+  const posts = await Post.find({ visibility: "public" })
+    .populate("categories.categoryId", "name")
+    .populate("poll", "question options isActive"); // only fetch useful fields
+
+  if (!posts || posts.length === 0) {
+    throw new Error("No public posts found");
+  }
+
+  // Format poll: return either populated poll or message
+  return posts.map((post) => ({
+    ...post.toObject(),
+    poll: post.poll || post.pollMessage,
+  }));
+};
+
