@@ -20,7 +20,7 @@ const postSchema = new mongoose.Schema(
       enum: ["public", "private"],
       default: "public",
     },
-    allowComments: { type: Boolean, default: true },
+    allowComments: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
