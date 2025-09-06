@@ -1,5 +1,6 @@
 import {
   createPost,
+  deletePost,
   getAllPostsForAdmin,
   getAllPublicPosts,
   updatePost,
@@ -69,6 +70,24 @@ export const updatePostController = async (req, res) => {
       success: true,
       message: "Post updated successfully",
       data: updatedPost,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ✅ Controller to delete post
+export const deletePostController = async (req, res) => {
+  try {
+    const result = await deletePost(req.params.postId);
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      data: result.post,
     });
   } catch (error) {
     return res.status(400).json({
