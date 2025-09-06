@@ -44,3 +44,12 @@ export const getAllPublicPostsController = async (req, res) => {
   }
 };
 
+// Controller for admin → fetch all posts
+export const getAllPostsForAdminController = async (req, res) => {
+  try {
+    const posts = await getAllPostsForAdmin();
+    res.status(200).json({ success: true, posts });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
