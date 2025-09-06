@@ -2,6 +2,7 @@ import {
   createPost,
   getAllPostsForAdmin,
   getAllPublicPosts,
+  updatePost,
 } from "../services/post.service.js";
 import { validatePost } from "../validations/validatePost.js";
 
@@ -51,5 +52,28 @@ export const getAllPostsForAdminController = async (req, res) => {
     res.status(200).json({ success: true, posts });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ✅ Controller to update post
+export const updatePostController = async (req, res) => {
+  try {
+    // Validate incoming data
+    const errors = validatePost(req.body);
+    if (errors.length > 0) {
+      return res.status(400).json({ success: false, errors });
+    }
+    const updatedPost = await updatePost(req.params.postId, req.body);
+
+    return res.status(200).json({
+      success: true,
+      message: "Post updated successfully",
+      data: updatedPost,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
