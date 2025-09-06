@@ -49,3 +49,18 @@ export const getAllPublicPosts = async () => {
   }));
 };
 
+// Service to fetch all posts for admin (no restrictions)
+export const getAllPostsForAdmin = async () => {
+  const posts = await Post.find({})
+    .populate("categories.categoryId", "name")
+    .populate("poll", "question options isActive");
+
+  if (!posts || posts.length === 0) {
+    throw new Error("No posts found in the system");
+  }
+
+  return posts.map((post) => ({
+    ...post.toObject(),
+    poll: post.poll || post.pollMessage,
+  }));
+};
