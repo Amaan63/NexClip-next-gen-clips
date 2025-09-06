@@ -1,5 +1,8 @@
 import express from "express";
-import { createPostController } from "../../controllers/post.controller.js";
+import {
+  createPostController,
+  getAllPostsForAdminController,
+} from "../../controllers/post.controller.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../../middlewares/authorize.role.js";
 import { ROLES } from "../../constants/roles.js";
@@ -11,6 +14,13 @@ postAdminRouter.post(
   authMiddleware,
   authorizeRoles(ROLES.ADMIN),
   createPostController
+);
+
+postAdminRouter.get(
+  "/getAllPosts",
+  authMiddleware,
+  authorizeRoles(ROLES.ADMIN),
+  getAllPostsForAdminController
 );
 
 export default postAdminRouter;
