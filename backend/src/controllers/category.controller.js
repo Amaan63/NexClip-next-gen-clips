@@ -4,23 +4,17 @@ import {
   getAllCategories,
   updateCategoryById,
 } from "../services/category.service.js";
+import {
+  validateCategory,
+  validateUpdateCategory,
+} from "../validations/validateCategory.js";
 
 export const createCategoryController = async (req, res) => {
   try {
     const { name, description, avatarUrl } = req.body;
-    if (!name) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Name is required" });
-    }
-    if (
-      avatarUrl !== undefined &&
-      (typeof avatarUrl !== "string" || avatarUrl.trim() === "")
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Avatar URL must be a non-empty string if provided",
-      });
+    const errors = validateCategory(req.body);
+    if (errors.length > 0) {
+      return res.status(400).json({ success: false, errors });
     }
 
     const category = await createCategory(name, description, avatarUrl);
@@ -44,6 +38,11 @@ export const updateCategoryController = async (req, res) => {
   try {
     const { categoryId } = req.params;
     const { name, description, avatarUrl } = req.body;
+
+    const errors = validateUpdateCategory(req.body);
+    if (errors.length > 0) {
+      return res.status(400).json({ success: false, errors });
+    }
 
     const updatedCategory = await updateCategoryById(categoryId, {
       name,
