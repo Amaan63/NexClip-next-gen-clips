@@ -19,3 +19,27 @@ export const validateCategory = (data) => {
 
   return errors;
 };
+
+// validations/validateUpdateCategory.js
+export const validateUpdateCategory = (data) => {
+  const errors = [];
+
+  // Name validation (optional, but if provided, must be valid)
+  if (data.name !== undefined) {
+    if (data.name.trim() === "") {
+      errors.push("Category name cannot be empty");
+    } else if (data.name.length < 3) {
+      errors.push("Category name must be at least 3 characters long");
+    }
+  }
+
+  // Avatar URL validation (optional, but must be valid if provided)
+  if (
+    data.avatarUrl !== undefined &&
+    (typeof data.avatarUrl !== "string" || data.avatarUrl.trim() === "")
+  ) {
+    errors.push("Avatar URL must be a non-empty string if provided");
+  }
+
+  return errors;
+};
