@@ -38,3 +38,21 @@ export const getAllPublicReels = async () => {
     return { success: false, message: error.message };
   }
 };
+
+// ✅ Update a reel by ID
+export const updateReel = async (reelId, updateData) => {
+  try {
+    const reel = await Reel.findByIdAndUpdate(reelId, updateData, {
+      new: true, // return updated doc
+      runValidators: true, // enforce schema validation
+      upsert: false, // do NOT create if not found
+    });
+
+    if (!reel) {
+      return { success: false, message: "Reel not found" };
+    }
+    return { success: true, data: reel };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
