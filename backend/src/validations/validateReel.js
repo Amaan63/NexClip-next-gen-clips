@@ -30,3 +30,31 @@ export const validateReel = (data) => {
 
   return errors;
 };
+
+// validations/validateUpdateReel.js
+export const validateUpdateReel = (data) => {
+  const errors = [];
+
+  // Caption validation (optional)
+  if (data.caption !== undefined) {
+    if (typeof data.caption !== "string" || data.caption.trim() === "") {
+      errors.push("Caption must be a non-empty string if provided");
+    } else if (data.caption.length > 300) {
+      errors.push("Caption must not exceed 300 characters");
+    }
+  }
+
+  // Media URL validation (optional)
+  if (data.mediaUrl !== undefined) {
+    if (typeof data.mediaUrl !== "string" || data.mediaUrl.trim() === "") {
+      errors.push("Media URL must be a non-empty string if provided");
+    }
+  }
+
+  // isVisible validation (optional)
+  if (data.isVisible !== undefined && typeof data.isVisible !== "boolean") {
+    errors.push("isVisible must be true or false if provided");
+  }
+
+  return errors;
+};
