@@ -1,5 +1,8 @@
 import express from "express";
-import { createReelController } from "../../controllers/reel.controller.js";
+import {
+  createReelController,
+  getAllReelsController,
+} from "../../controllers/reel.controller.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../../middlewares/authorize.role.js";
 import { ROLES } from "../../constants/roles.js";
@@ -11,6 +14,13 @@ reelAdminRouter.post(
   authMiddleware,
   authorizeRoles(ROLES.ADMIN),
   createReelController
+);
+
+reelAdminRouter.get(
+  "/getAllReels",
+  authMiddleware,
+  authorizeRoles(ROLES.ADMIN),
+  getAllReelsController
 );
 
 export default reelAdminRouter;
