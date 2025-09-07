@@ -18,3 +18,14 @@ export const createReel = async (reelData) => {
     return { success: false, message: error.message };
   }
 };
+
+// ✅ Get all reels (Admin)
+export const getAllReels = async () => {
+  try {
+    const reels = await Reel.find().sort({ createdAt: -1 });
+    return { success: true, data: reels };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
+
