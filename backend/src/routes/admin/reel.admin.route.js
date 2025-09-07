@@ -2,6 +2,7 @@ import express from "express";
 import {
   createReelController,
   getAllReelsController,
+  updateReelController,
 } from "../../controllers/reel.controller.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../../middlewares/authorize.role.js";
@@ -21,6 +22,13 @@ reelAdminRouter.get(
   authMiddleware,
   authorizeRoles(ROLES.ADMIN),
   getAllReelsController
+);
+
+reelAdminRouter.put(
+  "/updateReel/:reelId",
+  authMiddleware,
+  authorizeRoles(ROLES.ADMIN),
+  updateReelController
 );
 
 export default reelAdminRouter;
