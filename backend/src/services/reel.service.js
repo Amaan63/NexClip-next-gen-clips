@@ -56,3 +56,16 @@ export const updateReel = async (reelId, updateData) => {
     return { success: false, message: error.message };
   }
 };
+
+// ✅ Delete a reel by ID
+export const deleteReel = async (reelId) => {
+  try {
+    const reel = await Reel.findByIdAndDelete(reelId);
+    if (!reel) {
+      return { success: false, message: "Reel not found" };
+    }
+    return { success: true, message: "Reel deleted successfully" };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
