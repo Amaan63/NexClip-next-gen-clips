@@ -29,3 +29,12 @@ export const getAllReels = async () => {
   }
 };
 
+// ✅ Get all public reels (isVisible: true)
+export const getAllPublicReels = async () => {
+  try {
+    const reels = await Reel.find({ isVisible: true }); // only visible reels
+    return { success: true, data: reels };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
