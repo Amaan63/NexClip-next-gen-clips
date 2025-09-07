@@ -1,4 +1,8 @@
-import { createReel, getAllReels } from "../services/reel.service.js";
+import {
+  createReel,
+  getAllPublicReels,
+  getAllReels,
+} from "../services/reel.service.js";
 import { validateReel } from "../validations/validateReel.js";
 
 export const createReelController = async (req, res) => {
@@ -26,6 +30,21 @@ export const createReelController = async (req, res) => {
 export const getAllReelsController = async (req, res) => {
   try {
     const result = await getAllReels();
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ✅ Get all public reels (isVisible: true)
+export const getAllPublicReelsController = async (req, res) => {
+  try {
+    const result = await getAllPublicReels();
 
     if (!result.success) {
       return res.status(400).json(result);
