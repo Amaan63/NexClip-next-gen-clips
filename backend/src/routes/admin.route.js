@@ -5,6 +5,7 @@ import { authorizeRoles } from "../middlewares/authorize.role.js";
 import { ROLES } from "../constants/roles.js";
 import categoryAdminRoute from "./admin/category.admin.route.js";
 import postAdminRouter from "./admin/post.admin.route.js";
+import reelAdminRouter from "./admin/reel.admin.route.js";
 
 const adminRoute = express.Router();
 
@@ -18,5 +19,8 @@ adminRoute.use("/Category", categoryAdminRoute);
 
 // Post Admin Routes
 adminRoute.use("/Post", postAdminRouter);
+
+// Reel Admin Routes
+adminRoute.use("/Reel", reelAdminRouter);
 
 export default adminRoute;
