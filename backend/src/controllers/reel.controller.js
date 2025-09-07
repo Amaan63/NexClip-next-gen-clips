@@ -1,5 +1,6 @@
 import {
   createReel,
+  deleteReel,
   getAllPublicReels,
   getAllReels,
   updateReel,
@@ -70,6 +71,18 @@ export const updateReelController = async (req, res) => {
   }
 
   const result = await updateReel(reelId, req.body);
+  if (!result.success) {
+    return res.status(404).json(result);
+  }
+
+  res.status(200).json(result);
+};
+
+// ✅ Delete reel controller
+export const deleteReelController = async (req, res) => {
+  const { reelId } = req.params;
+  const result = await deleteReel(reelId);
+
   if (!result.success) {
     return res.status(404).json(result);
   }
