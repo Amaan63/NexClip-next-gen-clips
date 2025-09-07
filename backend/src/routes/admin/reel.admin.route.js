@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createReelController,
+  deleteReelController,
   getAllReelsController,
   updateReelController,
 } from "../../controllers/reel.controller.js";
@@ -29,6 +30,13 @@ reelAdminRouter.put(
   authMiddleware,
   authorizeRoles(ROLES.ADMIN),
   updateReelController
+);
+
+reelAdminRouter.delete(
+  "/deleteReel/:reelId",
+  authMiddleware,
+  authorizeRoles(ROLES.ADMIN),
+  deleteReelController
 );
 
 export default reelAdminRouter;
