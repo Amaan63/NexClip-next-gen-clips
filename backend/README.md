@@ -1,1 +1,1 @@
-# Fanatsy-Hub
+# NextClip - Next Gen Clip
