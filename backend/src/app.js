@@ -13,8 +13,13 @@ app.use(express.json());
 // for montioring http request
 app.use(morgan("dev"));
 
+const corsOptions = {
+  origin: process.env.CLIENT_URL, // allow only frontend URL
+  credentials: true, // if you send cookies/auth headers
+};
+
 // for cors
-app.use(cors());
+app.use(cors(corsOptions));
 
 // routes
 app.use("/api/fantasyHub", router);
