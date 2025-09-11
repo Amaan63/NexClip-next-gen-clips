@@ -18,16 +18,18 @@ export const login = (credentials) => async (dispatch) => {
     dispatch({ type: LOGIN_REQUEST });
 
     const response = await authApi.login(credentials);
-    const { token, user } = response.data;
+    console.log(response.data);
+    const { generatedToken, user } = response.data;
 
     dispatch({
       type: LOGIN_SUCCESS,
-      payload: { token, user },
+      payload: { generatedToken, user },
     });
 
     toast.success("Login successful!");
     return response.data;
   } catch (error) {
+    console.log(error);
     const errorMessage = error.response?.data?.message || "Login failed";
     dispatch({
       type: LOGIN_FAILURE,
