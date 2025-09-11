@@ -13,12 +13,22 @@ app.use(express.json());
 // for montioring http request
 app.use(morgan("dev"));
 
+const allowedOrigins = [
+  "http://localhost:5173", // dev
+  "https://your-production-domain.com", // prod
+];
+
 const corsOptions = {
-  origin: process.env.CLIENT_URL, // allow only frontend URL
-  credentials: true, // if you send cookies/auth headers
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
 };
 
-// for cors
 app.use(cors(corsOptions));
 
 // routes
