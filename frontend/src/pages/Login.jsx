@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToastContext } from "../components/Toast/ToastProvider";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -7,9 +8,19 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const naviagte = useNavigate();
+  // Initialize toast
+  const toast = useToastContext();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Login attempt:", { username, password });
+
+    if (username && password) {
+      // Success toast with intimate messaging
+      toast.success("Welcome to your private sanctuary! 💋", 3000);
+    } else {
+      // Error toast
+      toast.error("Please enter your credentials to continue", 4000);
+    }
   };
 
   return (
@@ -44,7 +55,7 @@ const Login = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder=" "
                   className="peer w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-transparent focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
-                  required
+                  // required
                 />
                 <label className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-2 peer-focus:left-3 peer-focus:text-purple-400 peer-focus:text-xs peer-valid:-top-2 peer-valid:left-3 peer-valid:text-purple-400 peer-valid:text-xs bg-black/80 px-1">
                   Username
@@ -59,7 +70,7 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder=" "
                   className="peer w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder-transparent focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
-                  required
+                  // required
                 />
                 <label className="absolute left-4 top-3 text-gray-400 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-2 peer-focus:left-3 peer-focus:text-purple-400 peer-focus:text-xs peer-valid:-top-2 peer-valid:left-3 peer-valid:text-purple-400 peer-valid:text-xs bg-black/80 px-1">
                   Password
@@ -118,7 +129,7 @@ const Login = () => {
               {/* Login button */}
               <button
                 type="submit"
-                onClick={() => naviagte("/home")}
+                // onClick={() => naviagte("/home")}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-black"
