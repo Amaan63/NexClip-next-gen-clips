@@ -17,6 +17,8 @@ const Login = () => {
     if (username && password) {
       // Success toast with intimate messaging
       toast.success("Welcome to your private sanctuary! 💋", 3000);
+      // Navigate to home page after successful login
+      naviagte("/home"); // Note: you have "naviagte" typo in your original code, keep it as is
     } else {
       // Error toast
       toast.error("Please enter your credentials to continue", 4000);
