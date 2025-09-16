@@ -169,7 +169,11 @@ const Login = () => {
                 onMouseLeave={() => setIsHovered(false)}
                 className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-black"
               >
-                {isHovered ? "Enter Your World" : "Sign In"}
+                {loading
+                  ? "Signing in…"
+                  : isHovered
+                  ? "Enter Your World"
+                  : "Sign In"}
               </button>
             </form>
 
