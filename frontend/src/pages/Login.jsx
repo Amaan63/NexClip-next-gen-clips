@@ -1,27 +1,48 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToastContext } from "../components/Toast/ToastProvider";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../redux/features/auth/auth.thunk";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const naviagte = useNavigate();
-  // Initialize toast
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const toast = useToastContext();
 
-  const handleSubmit = (e) => {
+  // pull loading/error state if you want to disable the button or show errors
+  const { loading } = useSelector((state) => state.auth);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (username && password) {
-      // Success toast with intimate messaging
-      toast.success("Welcome to your private sanctuary! 💋", 3000);
-      // Navigate to home page after successful login
-      naviagte("/home"); // Note: you have "naviagte" typo in your original code, keep it as is
-    } else {
-      // Error toast
+    if (!formData.username.trim() || !formData.password.trim()) {
       toast.error("Please enter your credentials to continue", 4000);
+      return;
+    }
+
+    try {
+      // dispatch thunk and unwrap result so we can handle success/error
+      const result = await dispatch(loginUser(formData)).unwrap();
+
+      toast.success(`Welcome, ${result.user.username}! 💋`, 3000);
+      navigate("/home");
+    } catch (err) {
+      toast.error(err, 4000); // err is the message returned by rejectWithValue
     }
   };
 
@@ -52,9 +73,15 @@ const Login = () => {
               {/* Username field */}
               <div className="relative">
                 <input
+                  name="username" // ✅ add name
                   type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={formData.username}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      [e.target.name]: e.target.value,
+                    })
+                  }
                   placeholder=" "
                   className="peer w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-transparent focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
                   // required
@@ -67,9 +94,15 @@ const Login = () => {
               {/* Password field */}
               <div className="relative">
                 <input
+                  name="password" // ✅ add password
                   type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      [e.target.name]: e.target.value,
+                    })
+                  }
                   placeholder=" "
                   className="peer w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder-transparent focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
                   // required
