@@ -1,40 +1,70 @@
 import { createBrowserRouter } from "react-router-dom";
 
-// Existing pages
+// Pages
 import Login from "../pages/Login";
 import NotFound from "../pages/NotFound";
+import Unauthorized from "../pages/Unauthorized";
 
-// New pages
 import Home from "../pages/Home";
 import Search from "../pages/Search";
 import Reels from "../pages/Reels";
 import Profile from "../pages/Profile";
 
+// Admin Pages
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import ManagePosts from "../pages/admin/ManagePosts";
+import ManageReels from "../pages/admin/ManageReels";
+import ManageCategories from "../pages/admin/ManageCategories";
+
+// Route guard
+import AdminRoute from "../components/Protected/AdminRoute";
+
 const router = createBrowserRouter([
+  { path: "/", element: <Login /> },
+  { path: "/home", element: <Home /> },
+  { path: "/search", element: <Search /> },
+  { path: "/reels", element: <Reels /> },
+  { path: "/profile", element: <Profile /> },
+
+  // Unauthorized page
+  { path: "/unauthorized", element: <Unauthorized /> },
+
+  // Admin Routes (Protected)
   {
-    path: "/",
-    element: <Login />, // Login page at root
+    path: "/admin",
+    element: (
+      <AdminRoute>
+        <AdminDashboard />
+      </AdminRoute>
+    ),
   },
   {
-    path: "/home",
-    element: <Home />,
+    path: "/admin/posts",
+    element: (
+      <AdminRoute>
+        <ManagePosts />
+      </AdminRoute>
+    ),
   },
   {
-    path: "/search",
-    element: <Search />,
+    path: "/admin/reels",
+    element: (
+      <AdminRoute>
+        <ManageReels />
+      </AdminRoute>
+    ),
   },
   {
-    path: "/reels",
-    element: <Reels />,
+    path: "/admin/categories",
+    element: (
+      <AdminRoute>
+        <ManageCategories />
+      </AdminRoute>
+    ),
   },
-  {
-    path: "/profile",
-    element: <Profile />,
-  },
-  {
-    path: "*", // catch-all 404
-    element: <NotFound />,
-  },
+
+  // Catch-all 404
+  { path: "*", element: <NotFound /> },
 ]);
 
 export default router;
