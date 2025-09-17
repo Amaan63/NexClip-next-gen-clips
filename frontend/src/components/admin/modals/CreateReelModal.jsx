@@ -17,7 +17,6 @@ const CreateReelModal = ({ onClose }) => {
       toast.error("Please select a video file");
       return;
     }
-
     // Simulate reel creation
     toast.success("Reel uploaded successfully! 🎬");
     onClose();
@@ -37,7 +36,6 @@ const CreateReelModal = ({ onClose }) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-
     const files = e.dataTransfer.files;
     if (files && files[0]) {
       const file = files[0];
@@ -64,20 +62,37 @@ const CreateReelModal = ({ onClose }) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
+  // Handle backdrop click
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-black/90 backdrop-blur-xl border border-white/20 rounded-3xl w-full max-w-lg">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Upload Reel
-          </h2>
+    // ✅ FIXED: Proper z-index and positioning
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]"
+      onClick={handleBackdropClick}
+    >
+      {/* ✅ FIXED: Scrollable container with proper max-height */}
+      <div className="bg-black/90 border border-white/20 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        {/* Modal Header - Fixed */}
+        <div className="flex items-center justify-between p-6 border-b border-white/10 bg-gradient-to-r from-purple-600/20 to-pink-600/20">
+          <div>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Create Reel
+            </h2>
+            <p className="text-gray-400 text-sm mt-1">
+              Share your moments with style
+            </p>
+          </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors"
+            className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-400 hover:text-white"
           >
             <svg
-              className="w-5 h-5 text-gray-400"
+              className="w-6 h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -92,184 +107,266 @@ const CreateReelModal = ({ onClose }) => {
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Video Upload */}
-          <div>
-            <label className="block text-white font-medium mb-3">
-              Video File *
-            </label>
-            <div
-              className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all ${
-                dragActive
-                  ? "border-purple-400 bg-purple-400/10"
-                  : "border-white/20 hover:border-white/40"
-              }`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              {formData.videoFile ? (
-                <div className="space-y-3">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto">
-                    <svg
-                      className="w-8 h-8 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">
-                      {formData.videoFile.name}
-                    </p>
-                    <p className="text-gray-400 text-sm">
-                      {formatFileSize(formData.videoFile.size)}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setFormData({ ...formData, videoFile: null })
-                    }
-                    className="text-red-400 text-sm hover:text-red-300"
-                  >
-                    Remove file
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto">
-                    <svg
-                      className="w-8 h-8 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-white font-medium mb-2">
-                      Drop your video here
-                    </p>
-                    <p className="text-gray-400 text-sm mb-4">
-                      or click to browse files
-                    </p>
+        {/* ✅ FIXED: Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Video Upload Section */}
+            <div className="space-y-4">
+              <label className="block text-white font-medium">
+                Video Upload *
+              </label>
+
+              {/* Upload Area */}
+              <div
+                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 ${
+                  dragActive
+                    ? "border-purple-400 bg-purple-400/10"
+                    : formData.videoFile
+                    ? "border-green-400 bg-green-400/10"
+                    : "border-white/20 hover:border-purple-400/50 hover:bg-purple-400/5"
+                }`}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="video/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+
+                {!formData.videoFile ? (
+                  <div className="space-y-4">
+                    <div className="w-16 h-16 mx-auto bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-white font-medium mb-2">
+                        Drop your video here
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        or click to browse files
+                      </p>
+                      <p className="text-gray-500 text-xs mt-2">
+                        Supported formats: MP4, MOV, AVI (Max 100MB)
+                      </p>
+                    </div>
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium hover:from-purple-500 hover:to-pink-500 transition-all"
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-medium"
                     >
                       Choose File
                     </button>
                   </div>
-                  <p className="text-gray-500 text-xs">
-                    Supported formats: MP4, MOV, AVI (Max 100MB)
-                  </p>
-                </div>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="video/*"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-            </div>
-          </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="w-16 h-16 mx-auto bg-gradient-to-r from-green-500 to-green-600 rounded-2xl flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-green-400 font-medium">
+                        {formData.videoFile.name}
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        {formatFileSize(formData.videoFile.size)}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors text-sm"
+                    >
+                      Change File
+                    </button>
+                  </div>
+                )}
 
-          {/* Caption */}
-          <div>
-            <label className="block text-white font-medium mb-2">Caption</label>
-            <textarea
-              value={formData.caption}
-              onChange={(e) =>
-                setFormData({ ...formData, caption: e.target.value })
-              }
-              rows={4}
-              className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 resize-none"
-              placeholder="Write a caption for your reel..."
-            />
-            <div className="flex items-center justify-between mt-2">
-              <p className="text-gray-500 text-xs">
-                Share what makes this moment special
-              </p>
-              <span className="text-gray-500 text-xs">
-                {formData.caption.length}/500
-              </span>
+                {/* Drag overlay */}
+                {dragActive && (
+                  <div className="absolute inset-0 bg-purple-600/20 border-purple-400 rounded-2xl flex items-center justify-center">
+                    <p className="text-purple-300 font-medium">
+                      Drop video here!
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Privacy Setting */}
-          <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-            <h3 className="text-white font-medium mb-3">Privacy Setting</h3>
-            <div className="space-y-3">
-              <label className="flex items-center space-x-3 cursor-pointer">
-                <input
-                  type="radio"
-                  name="privacy"
-                  checked={formData.isPublic}
-                  onChange={() => setFormData({ ...formData, isPublic: true })}
-                  className="w-4 h-4 text-purple-400 bg-transparent border-2 border-gray-400 focus:ring-purple-400"
-                />
-                <div>
-                  <span className="text-gray-300 block">🌐 Public</span>
-                  <span className="text-gray-500 text-xs">
-                    Everyone can see this reel
-                  </span>
-                </div>
+            {/* Caption Section */}
+            <div className="space-y-4">
+              <label className="block text-white font-medium">
+                Caption
+                <span className="text-gray-400 text-sm font-normal ml-2">
+                  (Optional)
+                </span>
               </label>
-              <label className="flex items-center space-x-3 cursor-pointer">
-                <input
-                  type="radio"
-                  name="privacy"
-                  checked={!formData.isPublic}
-                  onChange={() => setFormData({ ...formData, isPublic: false })}
-                  className="w-4 h-4 text-purple-400 bg-transparent border-2 border-gray-400 focus:ring-purple-400"
+              <div className="relative">
+                <textarea
+                  value={formData.caption}
+                  onChange={(e) =>
+                    setFormData({ ...formData, caption: e.target.value })
+                  }
+                  placeholder="Share what makes this moment special..."
+                  rows={4}
+                  className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 resize-none"
                 />
-                <div>
-                  <span className="text-gray-300 block">🔒 Private</span>
-                  <span className="text-gray-500 text-xs">
-                    Only you can see this reel
-                  </span>
+                <div className="absolute bottom-3 right-3 text-xs text-gray-500">
+                  {formData.caption.length}/500
                 </div>
-              </label>
+              </div>
             </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="flex space-x-4 pt-4">
+            {/* Privacy Settings */}
+            <div className="space-y-4">
+              <label className="block text-white font-medium">
+                Privacy Setting
+              </label>
+              <div className="space-y-3">
+                <label className="flex items-center space-x-3 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
+                  <input
+                    type="radio"
+                    name="privacy"
+                    value="public"
+                    checked={formData.isPublic}
+                    onChange={() =>
+                      setFormData({ ...formData, isPublic: true })
+                    }
+                    className="text-purple-600 focus:ring-purple-500 focus:ring-offset-0"
+                  />
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">Public</p>
+                      <p className="text-gray-400 text-sm">
+                        Everyone can see this reel
+                      </p>
+                    </div>
+                  </div>
+                </label>
+
+                <label className="flex items-center space-x-3 p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
+                  <input
+                    type="radio"
+                    name="privacy"
+                    value="private"
+                    checked={!formData.isPublic}
+                    onChange={() =>
+                      setFormData({ ...formData, isPublic: false })
+                    }
+                    className="text-purple-600 focus:ring-purple-500 focus:ring-offset-0"
+                  />
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">Private</p>
+                      <p className="text-gray-400 text-sm">
+                        Only you can see this reel
+                      </p>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {/* Modal Footer - Fixed */}
+        <div className="p-6 border-t border-white/10 bg-black/50">
+          <div className="flex items-center justify-end space-x-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 bg-white/10 text-gray-300 rounded-xl font-medium hover:bg-white/20 transition-colors"
+              className="px-6 py-3 bg-white/10 text-gray-300 rounded-xl hover:bg-white/20 hover:text-white transition-all duration-300 font-medium"
             >
               Cancel
             </button>
             <button
-              type="submit"
-              className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium hover:from-purple-500 hover:to-pink-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleSubmit}
               disabled={!formData.videoFile}
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Upload Reel
             </button>
           </div>
-        </form>
+        </div>
       </div>
+
+      {/* ✅ ADDED: Custom scrollbar styles */}
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(to bottom, #a855f7, #ec4899);
+          border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(to bottom, #9333ea, #db2777);
+        }
+      `}</style>
     </div>
   );
 };
