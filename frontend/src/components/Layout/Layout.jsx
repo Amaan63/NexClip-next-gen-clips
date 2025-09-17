@@ -1,32 +1,69 @@
-import React from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import BottomNavigation from "./BottomNavigation";
 
+// Create context for sidebar state
+const SidebarContext = createContext();
+
+export const useSidebar = () => {
+  const context = useContext(SidebarContext);
+  if (!context) {
+    throw new Error("useSidebar must be used within a SidebarProvider");
+  }
+  return context;
+};
+
 const Layout = ({ children }) => {
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile/tablet
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Calculate main content margin based on sidebar state
+  const getMainContentClass = () => {
+    if (isMobile) {
+      return "pb-20"; // Space for bottom navigation
+    }
+
+    // Desktop: adjust margin based on sidebar state
+    const baseMargin = sidebarExpanded ? "ml-64" : "ml-20";
+    return `${baseMargin} pb-4 transition-all duration-500`;
+  };
+
+  const sidebarContextValue = {
+    sidebarExpanded,
+    setSidebarExpanded,
+    isMobile,
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black">
-      {/* Background ambient elements */}
-      <div className="fixed inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-pink-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-2000"></div>
-        <div className="absolute bottom-1/4 left-3/4 w-64 h-64 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
+    <SidebarContext.Provider value={sidebarContextValue}>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black ">
+        {/* Header - Fixed at top */}
+        <Header />
+
+        {/* Sidebar - Desktop only */}
+        <Sidebar />
+
+        {/* Main Content Area */}
+        <main className={`pt-20 px-4 lg:px-8 ${getMainContentClass()}`}>
+          <div className="max-w-7xl mx-auto">{children}</div>
+        </main>
+
+        {/* Bottom Navigation - Mobile only */}
+        <BottomNavigation />
       </div>
-
-      {/* Header */}
-      <Header />
-
-      {/* Sidebar for desktop */}
-      <Sidebar />
-
-      {/* Main content */}
-      <main className="pt-20 lg:pl-64 pb-20 lg:pb-6 relative z-10">
-        <div className="container mx-auto px-4 py-6">{children}</div>
-      </main>
-
-      {/* Bottom Navigation for mobile */}
-      <BottomNavigation />
-    </div>
+    </SidebarContext.Provider>
   );
 };
 
