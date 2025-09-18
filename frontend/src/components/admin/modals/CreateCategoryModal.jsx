@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useToastContext } from "../../Toast/ToastProvider";
+import styles from "./ModalScrollBar.module.css"; // ✅ ADDED: Import CSS module for custom scrollbar
 
 const CreateCategoryModal = ({ onClose, editCategory = null }) => {
   const toast = useToastContext();
@@ -91,7 +92,9 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+        <div
+          className={`flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar ${styles.customScrollbar}`} // ✅ ADDED: Apply custom scrollbar class
+        >
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {/* Category Name */}
@@ -245,7 +248,7 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
           </form>
         </div>
       </div>
-      {/* ✅ ADDED: Custom scrollbar styles */}
+      {/* ✅ ADDED: Custom scrollbar styles
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px;
@@ -264,7 +267,7 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: linear-gradient(to bottom, #9333ea, #db2777);
         }
-      `}</style>
+      `}</style> */}
     </div>
   );
 };
