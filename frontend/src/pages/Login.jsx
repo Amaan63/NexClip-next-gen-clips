@@ -76,12 +76,7 @@ const Login = () => {
                   name="username" // ✅ add name
                   type="text"
                   value={formData.username}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      [e.target.name]: e.target.value,
-                    })
-                  }
+                  onChange={handleChange} // ✅ use handleChange
                   placeholder=" "
                   className="peer w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-transparent focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
                   // required
@@ -97,12 +92,7 @@ const Login = () => {
                   name="password" // ✅ add password
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      [e.target.name]: e.target.value,
-                    })
-                  }
+                  onChange={handleChange} // ✅ use handleChange
                   placeholder=" "
                   className="peer w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder-transparent focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
                   // required
