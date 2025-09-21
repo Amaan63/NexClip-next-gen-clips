@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import BottomNavigation from "./BottomNavigation";
+import style from "../../PageScrollBar.module.css";
 
 // Create context for sidebar state
 const SidebarContext = createContext();
@@ -48,14 +49,22 @@ const Layout = ({ children }) => {
 
   return (
     <SidebarContext.Provider value={sidebarContextValue}>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black ">
+      {/* Apply PageScrollbar to the main container with proper height and overflow */}
+      <div
+        className={`min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black ${style.PageScrollbar}`}
+        style={{
+          height: "100vh",
+          overflow: "auto",
+          overflowX: "hidden",
+        }}
+      >
         {/* Header - Fixed at top */}
         <Header />
 
         {/* Sidebar - Desktop only */}
         <Sidebar />
 
-        {/* Main Content Area */}
+        {/* Main Content Area - Remove PageScrollbar class from here */}
         <main className={`pt-20 px-4 lg:px-8 ${getMainContentClass()}`}>
           <div className="max-w-7xl mx-auto">{children}</div>
         </main>
