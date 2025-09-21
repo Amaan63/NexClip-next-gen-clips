@@ -1,0 +1,44 @@
+/* PageScrollbar.css */
+
+/* Apply only within this class */
+.PageScrollbar {
+  scrollbar-width: auto;
+  scrollbar-color: #8b5cf6 rgba(17, 17, 27, 0.8);
+}
+
+/* WebKit browsers */
+.PageScrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.PageScrollbar::-webkit-scrollbar-track {
+  background: rgba(17, 17, 27, 0.8);
+  border-radius: 6px;
+  border: 1px solid rgba(168, 85, 247, 0.1);
+}
+
+.PageScrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7, #c084fc);
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.2);
+}
+
+.PageScrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6, #a78bfa);
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 3px 6px rgba(168, 85, 247, 0.3);
+}
+
+.PageScrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #6d28d9, #7c3aed, #9333ea);
+}
+
+.PageScrollbar::-webkit-scrollbar-corner {
+  background: rgba(17, 17, 27, 0.8);
+}
+
+/* Hide scrollbar buttons */
+.PageScrollbar::-webkit-scrollbar-button {
+  display: none;
+}
