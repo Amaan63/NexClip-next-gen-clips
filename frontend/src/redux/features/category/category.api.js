@@ -7,3 +7,8 @@ export const createCategory = async (categoryData) => {
   );
   return data;
 };
+
+export const getAllCategories = async () => {
+  const { data } = await apiClient.get(`user/getAllCategory`);
+  return data;
+};
