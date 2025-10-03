@@ -248,26 +248,6 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
           </form>
         </div>
       </div>
-      {/* ✅ ADDED: Custom scrollbar styles
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(to bottom, #a855f7, #ec4899);
-          border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(to bottom, #9333ea, #db2777);
-        }
-      `}</style> */}
     </div>
   );
 };
