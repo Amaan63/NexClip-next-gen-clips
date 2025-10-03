@@ -1,6 +1,6 @@
 // src/api/axiosClient.js
 import axios from "axios";
-import store from "../redux/store"; // or pass store later
+import { store } from "../redux/store"; // or pass store later
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
