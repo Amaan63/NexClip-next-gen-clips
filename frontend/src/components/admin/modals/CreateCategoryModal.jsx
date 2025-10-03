@@ -222,19 +222,6 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
                 ) : (
                   <div className="space-y-4">
                     {/* Preview */}
-                    {/* {formData.file.type.startsWith("image/") ? (
-                      <img
-                        src={URL.createObjectURL(formData.file)}
-                        alt="preview"
-                        className="w-32 h-32 object-cover mx-auto rounded-xl border border-white/20"
-                      />
-                    ) : (
-                      <video
-                        src={URL.createObjectURL(formData.file)}
-                        controls
-                        className="w-48 mx-auto rounded-xl border border-white/20"
-                      />
-                    )} */}
                     {uploadedUrl ? (
                       formData.file?.type.startsWith("image/") ? (
                         <img
