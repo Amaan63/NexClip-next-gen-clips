@@ -13,7 +13,7 @@ export const createReel = async (reelData) => {
 
     const savedReel = await reel.save();
 
-    return { success: true, data: savedReel };
+    return { success: true, reels: savedReel };
   } catch (error) {
     return { success: false, message: error.message };
   }
@@ -23,7 +23,7 @@ export const createReel = async (reelData) => {
 export const getAllReels = async () => {
   try {
     const reels = await Reel.find().sort({ createdAt: -1 });
-    return { success: true, data: reels };
+    return { success: true, reels: reels };
   } catch (error) {
     return { success: false, message: error.message };
   }
@@ -33,7 +33,7 @@ export const getAllReels = async () => {
 export const getAllPublicReels = async () => {
   try {
     const reels = await Reel.find({ isVisible: true }); // only visible reels
-    return { success: true, data: reels };
+    return { success: true, reels: reels };
   } catch (error) {
     return { success: false, message: error.message };
   }
@@ -51,7 +51,7 @@ export const updateReel = async (reelId, updateData) => {
     if (!reel) {
       return { success: false, message: "Reel not found" };
     }
-    return { success: true, data: reel };
+    return { success: true, reels: reel };
   } catch (error) {
     return { success: false, message: error.message };
   }
