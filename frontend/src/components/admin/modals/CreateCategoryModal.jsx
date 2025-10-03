@@ -1,11 +1,14 @@
-
 import React, { useState, useRef } from "react";
 import { useToastContext } from "../../Toast/ToastProvider";
+import { useDispatch } from "react-redux";
+import { uploadToCloudinary } from "../../../utils/cloudinaryUpload";
+import { createCategoryThunk } from "../../../redux/features/category/category.thunk";
 import styles from "./ModalScrollBar.module.css"; // ✅ custom scrollbar
 
 const CreateCategoryModal = ({ onClose, editCategory = null }) => {
   const toast = useToastContext();
   const fileInputRef = useRef(null);
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     name: editCategory?.name || "",
@@ -13,24 +16,73 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
     file: null,
   });
   const [dragActive, setDragActive] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadedUrl, setUploadedUrl] = useState(null);
 
-  const handleSubmit = (e) => {
+  // When file selected -> upload immediately
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, file });
+      await uploadFile(file);
+    }
+  };
+
+  const handleDrop = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      setFormData({ ...formData, file: files[0] });
+      await uploadFile(files[0]);
+    }
+  };
+
+  // Separate upload logic
+  const uploadFile = async (file) => {
+    try {
+      setUploading(true);
+      const { url } = await uploadToCloudinary(file, "categories");
+      setUploadedUrl(url);
+    } catch (err) {
+      setUploadedUrl(null);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Submit only after uploadedUrl exists
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     if (!formData.name.trim()) {
       toast.error("Category name is required");
       return;
     }
-    if (!formData.file) {
-      toast.error("Please upload a file");
+    if (!uploadedUrl) {
+      toast.error("Please upload a file first");
       return;
     }
 
-    if (editCategory) {
-      toast.success("Category updated successfully! ✨");
-    } else {
-      toast.success("Category created successfully! 🎉");
+    try {
+      await dispatch(
+        createCategoryThunk({
+          name: formData.name,
+          description: formData.description,
+          avatarUrl: uploadedUrl, // 🔥 use uploaded URL
+        })
+      ).unwrap();
+
+      toast.success(
+        editCategory
+          ? "Category updated successfully! ✨"
+          : "Category created successfully! 🎉"
+      );
+      onClose();
+    } catch (err) {
+      toast.error(err.message || "Something went wrong");
     }
-    onClose();
   };
 
   const handleDrag = (e) => {
@@ -40,23 +92,6 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
       setDragActive(true);
     } else if (e.type === "dragleave") {
       setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    const files = e.dataTransfer.files;
-    if (files && files[0]) {
-      setFormData({ ...formData, file: files[0] });
-    }
-  };
-
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, file });
     }
   };
 
@@ -187,7 +222,7 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
                 ) : (
                   <div className="space-y-4">
                     {/* Preview */}
-                    {formData.file.type.startsWith("image/") ? (
+                    {/* {formData.file.type.startsWith("image/") ? (
                       <img
                         src={URL.createObjectURL(formData.file)}
                         alt="preview"
@@ -199,7 +234,36 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
                         controls
                         className="w-48 mx-auto rounded-xl border border-white/20"
                       />
-                    )}
+                    )} */}
+                    {uploadedUrl ? (
+                      formData.file?.type.startsWith("image/") ? (
+                        <img
+                          src={uploadedUrl}
+                          alt="preview"
+                          className="w-32 h-32 object-cover mx-auto rounded-xl border border-white/20"
+                        />
+                      ) : (
+                        <video
+                          src={uploadedUrl}
+                          controls
+                          className="w-48 mx-auto rounded-xl border border-white/20"
+                        />
+                      )
+                    ) : formData.file ? (
+                      formData.file.type.startsWith("image/") ? (
+                        <img
+                          src={URL.createObjectURL(formData.file)}
+                          alt="preview"
+                          className="w-32 h-32 object-cover mx-auto rounded-xl border border-white/20"
+                        />
+                      ) : (
+                        <video
+                          src={URL.createObjectURL(formData.file)}
+                          controls
+                          className="w-48 mx-auto rounded-xl border border-white/20"
+                        />
+                      )
+                    ) : null}
 
                     <div>
                       <p className="text-green-400 font-medium">
@@ -256,12 +320,23 @@ const CreateCategoryModal = ({ onClose, editCategory = null }) => {
             >
               Cancel
             </button>
-            <button
+            {/* <button
               onClick={handleSubmit}
               disabled={!formData.file || !formData.name.trim()}
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {editCategory ? "Update Category" : "Create Category"}
+            </button> */}
+            <button
+              onClick={handleSubmit}
+              disabled={!uploadedUrl || !formData.name.trim() || uploading}
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {uploading
+                ? "Uploading..."
+                : editCategory
+                ? "Update Category"
+                : "Create Category"}
             </button>
           </div>
         </div>
