@@ -6,12 +6,10 @@ import CreateCategoryModal from "../../components/admin/modals/CreateCategoryMod
 import CategoryCard from "../../components/admin/categories/CategoryCard";
 import CategoryStats from "../../components/admin/categories/CategoryStats";
 import CategoryFilters from "../../components/admin/categories/CategoryFilters";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchAllCategoriesThunk } from "../../redux/features/category/category.thunk";
+import { useSelector } from "react-redux";
 
 const ManageCategories = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const toast = useToastContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -59,10 +57,6 @@ const ManageCategories = () => {
   const totalReels = 0; // backend later
   // const activeCategories = categories.filter((c) => c.isActive).length;
   const activeCategories = categories.length;
-
-  useEffect(() => {
-    dispatch(fetchAllCategoriesThunk());
-  }, [dispatch]);
 
   return (
     <Layout>
