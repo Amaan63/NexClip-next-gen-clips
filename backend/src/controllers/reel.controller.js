@@ -22,10 +22,10 @@ export const createReelController = async (req, res) => {
     const result = await createReel(req.body);
 
     if (!result.success) {
-      return res.status(400).json(result);
+      return res.status(400).json({ success: false, reels: result });
     }
 
-    res.status(201).json(result);
+    res.status(201).json({ success: true, reels: result });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -37,10 +37,10 @@ export const getAllReelsController = async (req, res) => {
     const result = await getAllReels();
 
     if (!result.success) {
-      return res.status(400).json(result);
+      return res.status(400).json({ success: false, reels: result });
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json({ success: true, reels: result });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -52,10 +52,10 @@ export const getAllPublicReelsController = async (req, res) => {
     const result = await getAllPublicReels();
 
     if (!result.success) {
-      return res.status(400).json(result);
+      return res.status(400).json({ success: false, reels: result });
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json({ success: true, reels: result });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -72,10 +72,10 @@ export const updateReelController = async (req, res) => {
 
   const result = await updateReel(reelId, req.body);
   if (!result.success) {
-    return res.status(404).json(result);
+    return res.status(404).json({ success: false, reels: result });
   }
 
-  res.status(200).json(result);
+  res.status(200).json({ success: true, reels: result });
 };
 
 // ✅ Delete reel controller
@@ -84,8 +84,8 @@ export const deleteReelController = async (req, res) => {
   const result = await deleteReel(reelId);
 
   if (!result.success) {
-    return res.status(404).json(result);
+    return res.status(404).json({ success: false, reels: result });
   }
 
-  res.status(200).json(result);
+  res.status(200).json({ success: true, reels: result });
 };

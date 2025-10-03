@@ -30,7 +30,7 @@ export const createPostController = async (req, res) => {
     });
 
     // Respond with created post
-    return res.status(201).json({ success: true, data: post });
+    return res.status(201).json({ success: true, posts: post });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -40,7 +40,7 @@ export const createPostController = async (req, res) => {
 export const getAllPublicPostsController = async (req, res) => {
   try {
     const posts = await getAllPublicPosts();
-    res.status(200).json({ success: true, posts });
+    res.status(200).json({ success: true, posts: posts });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -50,7 +50,7 @@ export const getAllPublicPostsController = async (req, res) => {
 export const getAllPostsForAdminController = async (req, res) => {
   try {
     const posts = await getAllPostsForAdmin();
-    res.status(200).json({ success: true, posts });
+    res.status(200).json({ success: true, posts : posts });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -69,7 +69,7 @@ export const updatePostController = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Post updated successfully",
-      data: updatedPost,
+      posts: updatedPost,
     });
   } catch (error) {
     return res.status(400).json({
@@ -87,7 +87,7 @@ export const deletePostController = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: result.message,
-      data: result.post,
+      posts: result.post,
     });
   } catch (error) {
     return res.status(400).json({

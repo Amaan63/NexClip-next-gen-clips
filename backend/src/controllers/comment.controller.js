@@ -18,7 +18,7 @@ export const addCommentController = async (req, res) => {
 
     const comment = await addComment({ postId, userId, text });
 
-    res.status(201).json({ success: true, data: comment });
+    res.status(201).json({ success: true, comments: comment });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -30,7 +30,7 @@ export const getCommentsController = async (req, res) => {
 
     const comments = await getCommentsByPost(postId);
 
-    res.status(200).json({ success: true, data: comments });
+    res.status(200).json({ success: true, comments: comments });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }

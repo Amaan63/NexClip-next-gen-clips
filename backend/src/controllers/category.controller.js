@@ -18,7 +18,7 @@ export const createCategoryController = async (req, res) => {
     }
 
     const category = await createCategory(name, description, avatarUrl);
-    return res.status(201).json({ success: true, data: category });
+    return res.status(201).json({ success: true, categories: category });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -27,7 +27,7 @@ export const createCategoryController = async (req, res) => {
 export const getAllCategoriesController = async (req, res) => {
   try {
     const categories = await getAllCategories();
-    return res.status(200).json({ success: true, data: categories });
+    return res.status(200).json({ success: true, categories: categories });
   } catch (error) {
     return res.status(404).json({ success: false, message: error.message });
   }
@@ -50,7 +50,7 @@ export const updateCategoryController = async (req, res) => {
       avatarUrl,
     });
 
-    res.status(200).json({ success: true, data: updatedCategory });
+    res.status(200).json({ success: true, categories: updatedCategory });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -63,7 +63,7 @@ export const deleteCategoryController = async (req, res) => {
 
     const result = await deleteCategoryById(categoryId);
 
-    res.status(200).json({ success: true, data: result });
+    res.status(200).json({ success: true, categories: result });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
