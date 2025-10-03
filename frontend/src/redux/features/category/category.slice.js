@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createCategoryThunk } from "./category.thunk";
+import { createCategoryThunk, fetchAllCategoriesThunk } from "./category.thunk";
 
 const initialState = {
   categories: [], // keep an array to store multiple
@@ -36,6 +36,24 @@ const categorySlice = createSlice({
       .addCase(createCategoryThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to create category";
+        state.message = null;
+      })
+
+      // ✅ FETCH ALL CATEGORIES
+      .addCase(fetchAllCategoriesThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+      })
+      .addCase(fetchAllCategoriesThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.categories = action.payload; // replace array with fetched categories
+        state.error = null;
+        state.message = "Categories fetched successfully";
+      })
+      .addCase(fetchAllCategoriesThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch categories";
         state.message = null;
       });
   },
