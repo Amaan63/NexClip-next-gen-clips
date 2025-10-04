@@ -1,11 +1,15 @@
-import React, { useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useCallback, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useToastContext } from "../../Toast/ToastProvider";
 import Select from "react-select";
 import styles from "./ModalScrollBar.module.css";
+import { uploadToCloudinary } from "../../../utils/cloudinaryUpload";
+import { createPostThunk } from "../../../redux/features/post/post.thunk";
 
 const CreatePostModal = ({ onClose }) => {
   const toast = useToastContext();
+  const dispatch = useDispatch();
+  const fileInputRef = useRef(null);
   // Assuming a structure like { category: { categories: [...] } } in your Redux store
   const { categories } = useSelector(
     (state) => state.category || { categories: [] }
@@ -25,6 +29,7 @@ const CreatePostModal = ({ onClose }) => {
   const [errors, setErrors] = useState({});
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   // ✅ Drag & Drop Handlers
   const handleDragOver = (e) => {
@@ -42,19 +47,26 @@ const CreatePostModal = ({ onClose }) => {
     }
   }, []);
 
-  const handleFileUpload = (file) => {
+  const handleFileUpload = async (file) => {
     if (!file) return;
+
     if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
       toast.error("Only images or videos are allowed");
       return;
     }
 
-    const url = URL.createObjectURL(file);
-    setPreview(url);
-    setFormData({ ...formData, mediaUrl: url }); // For now local preview (replace with Cloudinary upload later)
-    // Clear media error when a file is uploaded
-    if (errors.mediaUrl) {
-      setErrors((prev) => ({ ...prev, mediaUrl: null }));
+    try {
+      setUploading(true);
+      const { url } = await uploadToCloudinary(file, "posts");
+      setPreview(url);
+      setFormData((prev) => ({ ...prev, mediaUrl: url }));
+      if (errors.mediaUrl) setErrors((prev) => ({ ...prev, mediaUrl: null }));
+    } catch (err) {
+      console.error("Upload failed:", err);
+      setPreview(null);
+      toast.error("Upload failed. Try again.");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -107,8 +119,9 @@ const CreatePostModal = ({ onClose }) => {
   };
 
   // ✅ Submit Handler
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!validateForm()) {
       toast.error("Please fill in all required fields.");
       return;
@@ -131,24 +144,39 @@ const CreatePostModal = ({ onClose }) => {
       allowComments: formData.allowComments,
     };
 
-    console.log("Final Payload:", payload);
-    toast.success("Post created successfully! ✨");
-    onClose();
+    try {
+      dispatch(createPostThunk(payload)).unwrap();
+      toast.success("Post created successfully! ✨");
+      onClose();
+    } catch (error) {
+      toast.error("Failed to create post. Please try again.");
+    }
   };
-
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]">
       <div className="bg-black/90 border border-white/20 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-6 border-b border-white/10 bg-gradient-to-r from-purple-600/20 to-pink-600/20">
           <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Create New Post
           </h2>
           <button
             onClick={onClose}
-            className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors"
+            className="p-2 hover:bg-white/10 rounded-xl transition-colors text-gray-400 hover:text-white"
           >
-            ✕
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
         </div>
 
@@ -185,55 +213,107 @@ const CreatePostModal = ({ onClose }) => {
             </div>
 
             {/* Media Upload */}
-            <div>
+            <div className="space-y-4">
+              <label className="block text-white font-medium">
+                Upload File *
+              </label>
               <div
-                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+                className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 ${
                   dragActive
                     ? "border-purple-400 bg-purple-400/10"
+                    : uploading
+                    ? "border-yellow-400 bg-yellow-400/10"
                     : errors.mediaUrl
                     ? "border-red-500 bg-red-500/5"
-                    : "border-white/20 bg-white/5"
+                    : preview
+                    ? "border-green-400 bg-green-400/10"
+                    : "border-white/20 hover:border-purple-400/50 hover:bg-purple-400/5"
                 }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
               >
                 <input
+                  ref={fileInputRef}
                   type="file"
                   accept="image/*,video/*"
                   hidden
                   id="mediaUpload"
                   onChange={(e) => handleFileUpload(e.target.files[0])}
                 />
-                <label
-                  htmlFor="mediaUpload"
-                  className="cursor-pointer text-gray-300"
-                >
-                  {preview ? (
-                    <div className="space-y-2">
-                      {formData.mediaUrl.includes("video") ||
-                      preview.startsWith("blob:video") ? (
-                        <video
-                          src={preview}
-                          controls
-                          className="max-h-48 mx-auto rounded-lg"
+
+                {!preview ? (
+                  <div className="space-y-4">
+                    <div className="w-16 h-16 mx-auto bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                         />
-                      ) : (
-                        <img
-                          src={preview}
-                          alt="Preview"
-                          className="max-h-48 mx-auto rounded-lg"
-                        />
-                      )}
-                      <p className="text-sm text-purple-300">Change File</p>
+                      </svg>
                     </div>
-                  ) : (
-                    <>
-                      <p>Drag & drop image/video here or click to upload *</p>
-                    </>
-                  )}
-                </label>
+                    <p className="text-white font-medium">
+                      Drop your file here
+                    </p>
+                    <p className="text-gray-400 text-sm">
+                      or click to browse files
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-medium"
+                    >
+                      Choose File
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Preview */}
+                    {formData.mediaUrl?.includes("video") ? (
+                      <video
+                        src={preview}
+                        controls
+                        className="w-48 mx-auto rounded-xl border border-white/20"
+                      />
+                    ) : (
+                      <img
+                        src={preview}
+                        alt="preview"
+                        className="w-32 h-32 object-cover mx-auto rounded-xl border border-white/20"
+                      />
+                    )}
+
+                    <div>
+                      <p className="text-green-400 font-medium">
+                        {formData.mediaUrl.split("/").pop()}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors text-sm"
+                    >
+                      Change File
+                    </button>
+                  </div>
+                )}
+
+                {dragActive && (
+                  <div className="absolute inset-0 bg-purple-600/20 border-purple-400 rounded-2xl flex items-center justify-center">
+                    <p className="text-purple-300 font-medium">
+                      Drop file here!
+                    </p>
+                  </div>
+                )}
               </div>
+
               {errors.mediaUrl && (
                 <p className="text-red-500 text-sm mt-1">{errors.mediaUrl}</p>
               )}
@@ -461,9 +541,10 @@ const CreatePostModal = ({ onClose }) => {
               </button>
               <button
                 type="submit"
-                className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:opacity-90 transition-opacity"
+                disabled={uploading}
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-500 hover:to-pink-500 transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create Post
+                {uploading ? "Uploading..." : "Create Post"}
               </button>
             </div>
           </form>
