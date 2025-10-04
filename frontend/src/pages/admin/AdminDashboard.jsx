@@ -6,6 +6,7 @@ import CreateCategoryModal from "../../components/admin/modals/CreateCategoryMod
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllCategoriesThunk } from "../../redux/features/category/category.thunk";
+import { getAllPostsThunk } from "../../redux/features/post/post.thunk";
 
 const AdminDashboard = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
@@ -14,13 +15,12 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { categories, loading } = useSelector((state) => state.category);
-
+  const { posts } = useSelector((state) => state.post);
   useEffect(() => {
-    // Call API only if categories list is empty and not already loading
-    if (!categories || categories.length === 0) {
-      dispatch(fetchAllCategoriesThunk());
-    }
-  }, [dispatch, categories]);
+    dispatch(fetchAllCategoriesThunk());
+    dispatch(getAllPostsThunk());
+  }, [dispatch]);
+
   const stats = [
     {
       label: "Total Posts",
