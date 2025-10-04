@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { createPostThunk } from "./post.thunk";
 
 const postSlice = createSlice({
   name: "post",
