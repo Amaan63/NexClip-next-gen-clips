@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createPostThunk } from "./post.thunk";
+import { createPostThunk, getAllPostsThunk } from "./post.thunk";
 
 const postSlice = createSlice({
   name: "post",
@@ -41,6 +41,22 @@ const postSlice = createSlice({
         state.loading = false;
         state.success = false;
         state.error = action.payload || "Something went wrong";
+      })
+
+      // 👉 Get All Posts
+      .addCase(getAllPostsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllPostsThunk.fulfilled, (state, action) => {
+        console.log("Fetched posts payload:", action.payload); // 🔍
+        state.loading = false;
+        state.posts = action.payload?.posts || [];
+        state.error = null;
+      })
+      .addCase(getAllPostsThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch posts";
       });
   },
 });
